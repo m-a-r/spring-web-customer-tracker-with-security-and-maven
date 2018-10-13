@@ -3,12 +3,15 @@ package com.luv2code.springdemo.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.springframework.security.provisioning.UserDetailsManager;
 
 import javax.sql.DataSource;
 
@@ -49,22 +52,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .exceptionHandling()
                     .accessDeniedPage("/access-denied");
-/*
-* http://localhost:8080/customer/showFormForUpdate?customerId=1
-	http://localhost:8080/customer/delete?customerId=3
-	http://localhost:8080/customer/showFormForAdd*/
     }
 
-//    @Bean
-//    private BCryptPasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
+    @Bean
+    public UserDetailsManager userDetailsManager() {
 
+        JdbcUserDetailsManager userDetailsManager = new JdbcUserDetailsManager();
+        userDetailsManager.setDataSource(securityDataSource);
+
+        return userDetailsManager;
+    }
+
+//      In Conflict with default authentication
 //    @Bean
-//    private DaoAuthenticationProvider authenticationProvider() {
-//
-//        DaoAuthenticationProvider auth = new DaoAuthenticationProvider();
-//        auth.setUserDetailsService();
-//
+//    public BCryptPasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder();
 //    }
 }
